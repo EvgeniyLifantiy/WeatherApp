@@ -1,77 +1,76 @@
-const Api = '701bd4cbe98492ced20181dc39ae5329';
+$(window).on('load',function(){
+    $('#myModal').modal('show');
+});
 
-let City = 'Ростов-на-Дону';
+class Forecast {
+    constructor (MinTemp,MaxTemp, Description, Day, Icon) {
+      this.MinTemp = MinTemp
+      this.MaxTemp = MaxTemp
+      this.Description = Description
+      this.Day = Day
+      this.Icon = Icon
+    }
+}
 
-document.getElementById('location').innerHTML = 'Погода в городе ' + City;
-
-fetch('http://api.openweathermap.org/data/2.5/forecast?q=' + City + '&appid=' + Api) //get Api and parse to json
+function showForecast(City){
+    fetch('http://api.openweathermap.org/data/2.5/forecast?q=' + City + '&appid=701bd4cbe98492ced20181dc39ae5329') //get Api and parse to json
     .then(function(resp) {
         return resp.json()
     })
     .then(function(data)
 
-        {
-            GetForecast(data)
-        })
+    {
+      getForecast(data)
+    })
+}
 
-
-function GetForecast(data) {
-
-    const today = new Date();
-    let LastDay = today.getDate() + 4; // Last date of forecast
-
-    const Temperatures = []
-    const Icons = []
-    const Descriptions = []
-    const Days = []
-
-    for (i = 0; LastDay > (data.list[i].dt_txt).slice(8, 10); i++) { //choosing days between today and the fourth
-
-        let date = (data.list[i].dt_txt).slice(8, 10)
-
-        if (today.getDate() < date || today.getDate() > 25) { //skip today`s temperature and for february /beginning of mounth
-
-            Temperatures.push((data.list[i].main.temp - 272.1) / 8); // it doesn't matter if you divide the sum,or divide each element to add it up later
-
-            Icons.push(data.list[i].weather[0].icon);
-
-            Descriptions.push(data.list[i].weather[0].description);
-
-            Days.push(data.list[i].dt_txt);
-
-        }
-
-    }
-
-    let SupArt = [4, 12, 20]//a matching array for selecting a time interval
-
-    for (i = 0; i < 3; i++) {
-
-        let Temperature = Temperatures.slice(i * 8, i * 8 + 8).reduce((x, y) => x + y).toFixed(1); // entering the average data
-        let Description = Descriptions[SupArt[i]]; //take description and icon in afternoon of every day
-        let Icon = Icons[SupArt[i]];
-        let Day = Days[i * 8].slice(0, 10); //"cutting" time``
-        document.getElementById('temp+' + i).innerHTML = Temperature + " C" + "&deg;"; //show the temp and descrip
-        document.getElementById('description+' + i).innerHTML = Description;
-        document.getElementById('DoW' + i).innerHTML = getWeekDay(Day);
-        document.getElementById('dat' + i).innerHTML = reverseDate(Day)
-
-        let WI = '.weather-icon' + i;
-        let weatherIcon = document.querySelector(WI);
-        weatherIcon.setAttribute('src', 'http://openweathermap.org/img/wn/' + Icon + '@2x.png'); //change and show icon
+function getForecast (data) {
+    for (let i = 0; i < data.list.length; i= i+8) { // we take values in 24 hours from the current moment
+      const forecastOfWeather = new Forecast(
+        data.list[i].main.temp_min,
+        data.list[i].main.temp_max,
+        data.list[i].weather[0].description,
+        data.list[i].dt_txt,
+        data.list[i].weather[0].icon
+      )
+      addCards(forecastOfWeather)
     }
 }
 
+function addCards(forecastOfWeather){
+    cardholdplace.prepend(createCard({
+    MinTemp:forecastOfWeather.MinTemp,
+    MaxTemp:forecastOfWeather.MaxTemp,
+    Icon:forecastOfWeather.Icon,
+    Day:forecastOfWeather.Day,
+    Description:forecastOfWeather.Description,
+  }));
+}
 
+const createCard = ({ MinTemp,MaxTemp,Description,Day,Icon }) => {
+    document.getElementById('location').innerHTML = 'Погода в городе ' + document.getElementById('text').value;
+    const template = document.createElement('section');
+    template.innerHTML = `
+    <div class="card text-white bg-primary mb-3" id="Card" style="width: 22rem;">
+    <h2 id="dat">${reverseDate(Day)}</h2> <!--for date-->
+    <h2 id="DoW">${getWeekDay(Day)}</h2> <!--for Day of Week-->
+    <div class="card-body">
+      <img src="http://openweathermap.org/img/wn/${Icon}@2x.png" class="weather-icon0">
+      <h2  id="description">${Description}</h2 >
+      <h2 id="temp">${((MaxTemp+MinTemp)/2-272.1).toFixed(1)}c&deg   </h2>
+    </div>
+  </div>
+    `;
+
+    return template.children[0];
+};
 
 function reverseDate(date) {
-    return (date.split('-').reverse().join('-'))
+    return (date.slice(0, 10).split('-').reverse().join('-'))
 }
-
 
 function getWeekDay(date) {
-    let days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-    let ddate = new Date(date)
-    return days[ddate.getDay()];
+   let days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+   let ddate = new Date(date)//convert our input to the date
+   return days[ddate.getDay()];
 }
-
