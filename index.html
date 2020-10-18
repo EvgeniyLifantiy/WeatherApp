@@ -6,46 +6,39 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel='icon' href='image/favicon.ico' type='image/x-icon'>
     <link rel='stylesheet' href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>Погода</title>
   </head>
       <body>
-        <div class="City">
+        <div class="City" id="City">
           <div class="frame" id=location>Погода в</div>
         </div>
-        <div class="Forecast">
-          <div class="card text-white bg-primary mb-3" style="width: 34rem;">
-            <h2 id="dat0"></h2> <!--for date-->
-            <h2 id="DoW0"></h2> <!--for Day of Week-->
-            <div class="card-body">
-              <img src="http://openweathermap.org/img/wn/10d@2x.png" class="weather-icon0">
-              <h2  id="description+0"></h2 > <!--weather`s description-->
-              <h2 id="temp+0"></h2><!--temperature-->
+      <div class="forecast" id="cardholdplace">
+      </div>
+      <div class="modal fade hide"  id="myModal" data-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Введите название города</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              </button>
+            </div>
+              <div class="modal-body">
+              <form>
+                <div class="form-group">
+                <input class="form-control form-control-lg" type="text" id="text" placeholder="Москва">
+              </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onClick="showForecast(document.getElementById('text').value); "  data-dismiss="modal">Применить</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
             </div>
           </div>
-          <div class="card text-white bg-primary mb-3" style="width: 34rem;">
-            <h2 id="dat1"></h2>
-            <h2 id="DoW1"></h2>
-            <div class="card-body">
-              <img src="http://openweathermap.org/img/wn/10d@2x.png" class="weather-icon1">
-              <h2 id="description+1"></h2>
-              <h2 id="temp+1"></h2>
-
-            </div>
-          </div>
-          <div class="card text-white bg-primary mb-3" style="width: 34rem;">
-            <h2 id="dat2"></h2>
-            <h2 id="DoW2"></h2>
-            <div class="card-body">
-              <img src="http://openweathermap.org/img/wn/10d@2x.png" class="weather-icon2">
-              <h2 id="description+2"></h2 >
-              <h2 id="temp+2"></h2>
-            </div>
         </div>
       </div>
 
-
     <script src="script.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
   </body>
